@@ -1,0 +1,46 @@
+<svg version="1.1" viewBox="0 0 156 216" xmlns="http://www.w3.org/2000/svg">
+<defs>
+    <path id="segA" d="m16 0c-4.1221 0-7.5433 1.7965-10.479 4.5215l19.479 19.479h58l19.479-19.479c-2.9352-2.725-6.4785-4.5215-10.479-4.5215z" />
+    <path id="segB" d="m103.48 5.5215-19.479 19.479v58l12 12 12-12v-67c0-3.8923-1.7965-7.5433-4.5215-10.479z" />        
+    <path id="segC" d="m96 97-12 12v58l19.396 19.396c2.7714-2.9944 4.6035-6.3295 4.6035-10.396v-67z" />
+    <path id="segD" d="m25 168-19.479 19.479c2.9352 2.725 5.8967 4.5215 10.479 4.5215h76c4 0 7.4766-1.8589 10.4-4.5996l-19.4-19.4z" />
+    <path id="segE" d="m12 97-12 12v67c0 3.7774 1.7965 7.5433 4.5215 10.479l19.479-19.479v-58z" />
+    <path id="segF" d="m4.5215 5.5215c-2.725 2.9352-4.5215 6.3564-4.5215 10.479v67l12 12 12-12v-58z" />
+    <path class="led-bright-green" id="segG" d="m25 84-12 12 12 12h58l12-12-12-12z" />
+    <rect id="segDot" y="168" width="24" height="24" />
+    <g id="segDoubledot">
+        <rect y="108" width="24" height="24" />
+        <rect y="60" width="24" height="24" />
+    </g>
+    <g class="mod7Seg">
+        <use href="#segA" />
+        <use href="#segB" />
+        <use href="#segC" />
+        <use href="#segD" />
+        <use href="#segE" />
+        <use href="#segF" />
+        <use href="#segG" />
+    </g>
+    <g class="modDot">
+        <use href="#segDot" />
+    </g>
+    <g class="modDoubledot">
+        <use href="#segDoubledot" />
+    </g>
+</defs>
+    <g class="mod7Seg">
+        <use href="#segA" />
+        <use href="#segB" />
+        <use href="#segC" />
+        <use href="#segD" />
+        <use href="#segE" />
+        <use href="#segF" />
+        <use href="#segG" />
+    </g>
+    <g class="modDot">
+        <use href="#segDot" />
+    </g>
+    <g class="modDoubledot">
+        <use href="#segDoubledot" />
+    </g>
+</svg>

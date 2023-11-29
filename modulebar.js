@@ -1,0 +1,236 @@
+const MOD7_SEGS = {
+    " ": "-------",
+    "0": "ABCDEF-",
+    "1": "-BV----",
+    "2": "AB-DE-G",
+    "3": "ABCD--G",
+    "4": "-BC--FG",
+    "5": "A-CD-FG",
+    "6": "A CDEFG",
+    "7": "ABC----",
+    "8": "ABCDEFG",
+    "9": "ABCD-FG",
+    "-": "------G",
+    "E": "A--DEFG",
+}
+
+const MODM13_SEGS = {
+       // ABCDEFGHIJKLM 
+" ": "-------------",
+"0": "ABCDEFGHIJKL-",
+"1": "--CDEFG------",
+"2": "ABCD---HIJ--M",
+"3": "ABCD-FGHI---M",
+"4": "A--DEFG----LM",
+"5": "AB---FGHI--LM",
+"6": "AB---FGHIJKLM",
+"7": "ABCDEFG------",
+"8": "ABCD-FGHIJ-LM",
+"9": "ABCDEFGH---LM",
+"-": "------------M",
+"E": "ABC---GHIJKLM",
+}
+
+// "normal" design
+const MODDEFS_NORMAL = {
+    "8": {moduleClass: "mod7Seg",       width: 9, segCount: 7, segs: MOD7_SEGS},
+    ".": {moduleClass: "modDot",        width: 2, segCount: 1, segs: {" ": "-", ".": "X"}},
+    ":": {moduleClass: "modDoubledot",  width: 2, segCount: 1, segs: {" ": "-", ":": "X"}},
+    " ": {moduleClass: "modSpace",      width: 4, segCount: 0, segs: {}},
+}
+
+// "modern" design
+const MODDEFS_MODERN = {
+    "8": {moduleClass: "modm13Seg",      width: 9, segCount: 13, segs: MODM13_SEGS},
+    ".": {moduleClass: "modmDot",        width: 2, segCount:  1, segs: {" ": "-", ".": "X"}},
+    ":": {moduleClass: "modmDoubledot",  width: 2, segCount:  1, segs: {" ": "-", ":": "X"}},
+    " ": {moduleClass: "modmSpace",      width: 4, segCount:  0, segs: {}},
+}
+
+// Define a line for each module set (module set = design)
+let DESIGNDEFS = {
+    "normal": {modDefs: MODDEFS_NORMAL, defs: SVG_NORMAL_DEFS, scale: 12, height: 16, space: 1, element: null},
+    "modern": {modDefs: MODDEFS_MODERN, defs: SVG_MODERN_DEFS, scale: 12, height: 16, space: 1, element: null},
+}
+
+function repl(template, dictionary) {
+    result = template;
+    for (const [key, value] of Object.entries(dictionary))
+        result = result.replaceAll("%"+key.toUpperCase()+"%", value);
+    return result;
+}
+
+class ModuleBar {
+
+    constructor(container, defString, designId="normal", slant=4, spacing=1) {
+        this.container = container;
+        this.modules = [];
+        this._darkColor = "#200";
+        this._brightColor = "#f00";
+        this._slant = slant;
+        this._spacing = spacing;
+        this.design = DESIGNDEFS[designId];
+        this.parser = new DOMParser();
+        if (this.design.element == null) {
+            // If not yet done, create an invisible svg element for the segments shapes
+            this.design.element = this.loadSvgElement(this.design.defs);
+            document.body.appendChild(this.design.element);
+        }
+
+        // Create the container svg element
+        this.element = this.loadSvgElement(MODBAR_TEMPLATE);
+        
+        // Create an svg group for every module. The modules svgs are clones of
+        // design template svg.
+        let x = 0;
+        for (let i=0; i<defString.length; i++) {
+            let mod = new Module(this, i, x * this.design.scale, defString[i]);
+            this.modules.push(mod);
+            x += mod.def.width;
+            if (i<defString.length-1)
+                x += this.design.space*this._spacing;
+        }
+        let dx = this.design.height*Math.tan(this._slant*Math.PI/180.0)*this.design.scale;
+        let w = x*this.design.scale + dx;
+        let h = this.design.height*this.design.scale;
+        this.element.setAttribute("viewBox", "0 0 "+w+" "+h);
+        //this.element.setAttribute("width", "auto");
+        //this.element.setAttribute("height", "auto");
+        this.element.children[0].setAttribute("transform", "translate("+dx+") skewX("+(-this._slant)+")");
+        this.container.appendChild(this.element);
+
+        this.update(' '.repeat(this.modules.length));
+    }
+
+    get darkColor() {
+        return this._darkColor;
+    }
+
+    set darkColor(value) {
+        if (value != this._darkColor) {
+            this._darkColor = value;
+            this.update(this._chars);
+        }
+    }
+
+    get brightColor() {
+        return this._brightColor;
+    }
+
+    set brightColor(value) {
+        if (value != this._brightColor) {
+            this._brightColor = value;
+            this.update(this._chars);
+        }
+    }
+
+    get colors() {
+        return [this._brightColor, this._darkColor];
+    }
+
+    set colors(value) {
+        if (value != this.colors) {
+            this.brightColor = value[0];
+            this.darkColor = value[1];
+        }
+    }
+
+    get slant() {
+        return this._slant;
+    }
+
+    loadSvgElement(xmlCode) {
+        return this.parser.parseFromString(xmlCode, 'image/svg+xml').documentElement;    
+    }   
+
+    update(chars) {
+        let i=0;
+        while (i<chars.length && i<this.modules.length) {
+            this.modules[i].update(chars[i]);
+            i++;
+        }
+        this._chars = chars;
+    }
+
+    display(chars) {
+        if (chars != this._chars) {
+            let i=0;
+            while (i<chars.length && i<this.modules.length) {
+                this.modules[i].display(chars[i]);
+                i++;
+            }
+            this._chars = chars;
+        }
+    }
+}
+
+class Module {
+
+    constructor(bar, index, x, defId) {
+        this.bar = bar;
+        this.index = index;
+        this.def = this.bar.design.modDefs[defId];
+        this.element = this.bar.design.element.querySelector("."+this.def.moduleClass).cloneNode(true);
+        this.element.classList.add("module");
+        this.element.classList.add("mod"+this.bar.modules.length);
+        this.element.setAttribute('transform', "translate("+x.toString()+")");
+        this.bar.element.children[0].appendChild(this.element);
+        this._char = ' '; 
+        this._onclick = null;
+        this._topRect = null;
+        this._bottomRect = null;
+        this._zoneClick = (e) => {if (e.target.module._onclick) e.target.module._onclick(e)};
+    }
+
+    addClickZones() {
+        this._topRect = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
+        this._topRect.setAttribute("y", "0");
+        this._topRect.zone = "top";
+        this._bottomRect = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
+        this._bottomRect.setAttribute("y", "50%");
+        this._bottomRect.zone = "bottom";
+        for (let rect of [this._topRect, this._bottomRect]) {
+          // id="topZone" name="top" x="0" y="0" width="112" height="50%" visibility="hidden" cursor="pointer" pointer-events="painted"
+          rect.setAttribute("x", 0);
+          rect.setAttribute("width", this.def.width * this.bar.design.scale);
+          rect.setAttribute("height", "50%");
+          rect.setAttribute("visibility", "hidden");
+          rect.setAttribute("cursor", "pointer");
+          rect.setAttribute("pointer-events", "painted");
+          rect.module = this;
+          this.element.appendChild(rect);
+        }
+    }
+  
+    get onclick() {
+        return this._onclick;
+    }
+
+    set onclick(value) {
+        if (value == this._onclick) return;
+        if (this._onclick != null) this.element.removeEventListener('click', this._zoneClick);
+        this._onclick = value;
+        if (value) {
+            if (this._topRect == null) this.addClickZones();
+            this.element.addEventListener('click', this._zoneClick);
+        }
+    }
+
+    update(char) {
+        let mask = this.def.segs[char];
+        if (mask === null) mask = this.def.segs[' '];
+        for (let i=0; i<this.def.segCount; i++) {
+            let seg = this.element.children[i];
+            if (mask[i]=="-")
+                seg.style.fill = this.bar.darkColor;
+            else
+                seg.style.fill = this.bar.brightColor;
+        }
+        this._char = char;
+    }
+
+    display(char) {
+        if (char != this._char)
+            this.update(char);
+    }
+}

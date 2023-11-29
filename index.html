@@ -1,0 +1,72 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="modules.css"/>
+    <script src="modules.js"></script>
+    <script src="modulebar.js"></script>
+
+    <style title="svg-style">
+        body {
+            background-color: silver;
+        }
+
+
+        #container {
+            width:800px;
+            aspect-ratio: 4/1;
+            background-color:#1f45b7;
+        }
+
+        #allciphers {
+            width:1800px;
+            aspect-ratio: 8/1;
+            background-color:black;
+        }
+
+        svg {           
+            position: relative;
+            left: 50%;
+            top: 50%;
+            transform: translateX(-50%) translateY(-50%);
+        }
+
+    </style>
+    <script>
+        const dateTimeFormat = new Intl.DateTimeFormat('en-us', {
+            hour: "2-digit",
+            minute:"2-digit",
+            second:"2-digit",
+            hour12: false,
+        });
+
+        function getTimeStr(time) {
+            return dateTimeFormat.format(time)
+        }
+
+        window.onload = () => {
+            modbar = new ModuleBar(document.getElementById("container"), "88:88:88", "normal", 5, 1);
+            modbar.colors = ["#e6ffff", "#3050aa"];
+            modbar.display(getTimeStr(Date.now()));
+
+            modbar2 = new ModuleBar(document.getElementById("allciphers"), "88888888888 :.", "modern", 5, 1);
+            modbar2.display(" 0123456789x:.");
+
+            setInterval(()=>{
+                time = Date.now()
+                str = getTimeStr(time);
+                if ((time % 1000) > 500)
+                    str = str.replaceAll(":", " ");
+                modbar.display(str);
+            }, 250);        
+        }
+    </script>
+</head>
+    <body> 
+        <div id="container">
+        </div>
+        <div id="allciphers">
+        </div>
+    </body>
+</html>
