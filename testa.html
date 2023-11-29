@@ -6,43 +6,21 @@
     <script src="modules.js"></script>
     <script src="modulebar.js"></script>
 
-    <style title="svg-style">
-        #mysvg {
-            height: 200px;
-            aspect-ratio:3/2;
+    <style title="">
+        #modbar {
+            width: 400px;
             background-color:black;
-            background-color: gray;
         }
-
-        .rgb {
-            position: relative;
-            left: 50%;
-            top: 50%;
-            transform: translateX(-50%) translateY(-50%);
-        }
-
-        .seg-dark {
-            fill: maroon;
-        }
-
-        .seg-bright {
-            fill: red;
-        }
-
     </style>
+    <script>
+        window.onload = ()=>{
+            bar = new ModuleBar(document.getElementById("modbar"), "88:88", "modern", 0, 2);
+            bar.color = ["#f0f", "#202"];
+            bar.display("12:34:56");
+        }
+    </script>
 </head>
-    <body> 
-        <div id="mysvg">
-            <svg class="rgb" width="auto" height="auto" viewBox="0 0 100 50">
-                <defs>                    
-                    <rect id="a" width="20" height="30"/>;
-                </defs>    
-                <g transform="translate(0 10)"> 
-                    <use href="#a" x="10" fill="#f00" />
-                    <use href="#a" x="40" fill="#0f0" />
-                    <use href="#a" x="70" fill="#00f" />
-                </g>
-            </svg>
-        </div>
+    <body>
+        <div id="modbar"></div>
     </body>
 </html>

@@ -7,16 +7,15 @@
     <script src="modules.js"></script>
     <script src="modulebar.js"></script>
 
-    <style title="svg-style">
+    <style>
         body {
             background-color: silver;
         }
 
-
         #container {
             width:800px;
-            aspect-ratio: 4/1;
-            background-color:#1f45b7;
+            aspect-ratio: 9/2;
+            background-color:#002200;
         }
 
         #allciphers {
@@ -27,9 +26,6 @@
 
         svg {           
             position: relative;
-            left: 50%;
-            top: 50%;
-            transform: translateX(-50%) translateY(-50%);
         }
 
     </style>
@@ -46,12 +42,9 @@
         }
 
         window.onload = () => {
-            modbar = new ModuleBar(document.getElementById("container"), "88:88:88", "normal", 5, 1);
-            modbar.colors = ["#e6ffff", "#3050aa"];
+            modbar = new ModuleBar(document.getElementById("container"), "88:88:88", "modern", 5, 1);
             modbar.display(getTimeStr(Date.now()));
-
-            modbar2 = new ModuleBar(document.getElementById("allciphers"), "88888888888 :.", "modern", 5, 1);
-            modbar2.display(" 0123456789x:.");
+            modbar.color = "green";
 
             setInterval(()=>{
                 time = Date.now()
@@ -65,8 +58,6 @@
 </head>
     <body> 
         <div id="container">
-        </div>
-        <div id="allciphers">
         </div>
     </body>
 </html>

@@ -1,3 +1,47 @@
+//((((((((((((((((((((((((((((((((((((((((((((((((((()))))))))))))))))))))))))))))))))))))))))))))))))))
+//
+//  modulebar.js (c) 2023 Jan-Erich Schirrmacher, www.atomek.de
+//
+//  Displays led style ciphers with SVG.
+//
+//  Example:
+//    1. Create a DIV element in your HTML and set its id to "mycontainer"
+//    2. Create a ModuleBar instance in your window.onload event 
+//       modbar = new ModuleBar(document.getElementById("mycontainer"), "88:88");
+//    3. Display a value
+//       modbar.display("12:34");
+//
+//  On creation you enter the list of used modules in the ModuleBar's constructor.
+//  The list of modules is a string which combines some of the available modules:
+//   "8"  z-segment module
+//   ":"  double dot module
+//   "."  dot module
+//   " "  spacer
+//
+//   The chars of the strings you can display must conform to the modules.
+//   The space character lets all segments of the module appear dark.
+// 
+//   Module/display examples:
+//      "888"/"1243" => "124"
+//      "8.8.8.8"/"12.34" => "12.34"
+//      "8888"/"-3" => "-3  "
+//      "8888"/" -3 " => " -3 "
+//      "88:88"/"12:34:56" => "12:34"
+//      "88:88"/"12 34" => "12 34"
+//                           
+//   Features:
+//      
+//      new ModuleBar(myElement, "8888", "modern", 0, 2);
+//      creates a module bar with the style "modern", 0 slant and a double space between
+//      the modules.
+//
+//      Use other colors:
+//        modbar.color = ["red", "maroon"]; // or ["#f0f", "#202"]
+//        modbar.color = "red"; // colors available: "red", "green", "blue", "yellow"
+//
+//((((((((((((((((((((((((((((((((((((((((((((((((((()))))))))))))))))))))))))))))))))))))))))))))))))))
+
+
 const MOD7_SEGS = {
     " ": "-------",
     "0": "ABCDEF-",
@@ -15,7 +59,6 @@ const MOD7_SEGS = {
 }
 
 const MODM13_SEGS = {
-       // ABCDEFGHIJKLM 
 " ": "-------------",
 "0": "ABCDEFGHIJKL-",
 "1": "--CDEFG------",
@@ -53,6 +96,14 @@ let DESIGNDEFS = {
     "modern": {modDefs: MODDEFS_MODERN, defs: SVG_MODERN_DEFS, scale: 12, height: 16, space: 1, element: null},
 }
 
+// Some color schemes
+let COLOR_SCHEMES = {
+    "red":      ["#ff0000", "#220000"],
+    "green":    ["#00ff00", "#002200"],
+    "blue":     ["#00ffff", "#002222"],
+    "yellow":   ["#ffff00", "#222200"],
+};
+
 function repl(template, dictionary) {
     result = template;
     for (const [key, value] of Object.entries(dictionary))
@@ -65,8 +116,9 @@ class ModuleBar {
     constructor(container, defString, designId="normal", slant=4, spacing=1) {
         this.container = container;
         this.modules = [];
-        this._darkColor = "#200";
-        this._brightColor = "#f00";
+        let cols = COLOR_SCHEMES["red"];
+        this._darkColor = cols[1];
+        this._brightColor = cols[0];
         this._slant = slant;
         this._spacing = spacing;
         this.design = DESIGNDEFS[designId];
@@ -74,6 +126,7 @@ class ModuleBar {
         if (this.design.element == null) {
             // If not yet done, create an invisible svg element for the segments shapes
             this.design.element = this.loadSvgElement(this.design.defs);
+            this.design.element.style.display = "none";
             document.body.appendChild(this.design.element);
         }
 
@@ -95,7 +148,7 @@ class ModuleBar {
         let h = this.design.height*this.design.scale;
         this.element.setAttribute("viewBox", "0 0 "+w+" "+h);
         //this.element.setAttribute("width", "auto");
-        //this.element.setAttribute("height", "auto");
+        //this.element.setAttribute("height", "100%");
         this.element.children[0].setAttribute("transform", "translate("+dx+") skewX("+(-this._slant)+")");
         this.container.appendChild(this.element);
 
@@ -124,12 +177,15 @@ class ModuleBar {
         }
     }
 
-    get colors() {
+    get color() {
         return [this._brightColor, this._darkColor];
     }
 
-    set colors(value) {
-        if (value != this.colors) {
+    set color(value) {
+        if (typeof(value)=="string") {
+            let cols = COLOR_SCHEMES[value];
+            this.color = cols;
+        } else if (value != this.colors) {
             this.brightColor = value[0];
             this.darkColor = value[1];
         }
@@ -144,22 +200,18 @@ class ModuleBar {
     }   
 
     update(chars) {
-        let i=0;
-        while (i<chars.length && i<this.modules.length) {
-            this.modules[i].update(chars[i]);
-            i++;
+        let c=0, m=0;
+        while (c<chars.length && m<this.modules.length) {
+            if (this.modules[m].display(chars[c]))
+                c++;
+            m++;
         }
         this._chars = chars;
     }
 
     display(chars) {
         if (chars != this._chars) {
-            let i=0;
-            while (i<chars.length && i<this.modules.length) {
-                this.modules[i].display(chars[i]);
-                i++;
-            }
-            this._chars = chars;
+            this.update(chars);
         }
     }
 }
@@ -175,7 +227,7 @@ class Module {
         this.element.classList.add("mod"+this.bar.modules.length);
         this.element.setAttribute('transform', "translate("+x.toString()+")");
         this.bar.element.children[0].appendChild(this.element);
-        this._char = ' '; 
+        this._char = ''; 
         this._onclick = null;
         this._topRect = null;
         this._bottomRect = null;
@@ -218,19 +270,21 @@ class Module {
 
     update(char) {
         let mask = this.def.segs[char];
-        if (mask === null) mask = this.def.segs[' '];
-        for (let i=0; i<this.def.segCount; i++) {
-            let seg = this.element.children[i];
-            if (mask[i]=="-")
-                seg.style.fill = this.bar.darkColor;
-            else
-                seg.style.fill = this.bar.brightColor;
+        if (mask) {
+            for (let i=0; i<this.def.segCount; i++) {
+                let seg = this.element.children[i];
+                if (mask[i]=="-")
+                    seg.style.fill = this.bar.darkColor;
+                else
+                    seg.style.fill = this.bar.brightColor;
+            }
+            this._char = char;
+            return true;
         }
-        this._char = char;
+        return false;
     }
 
     display(char) {
-        if (char != this._char)
-            this.update(char);
+        return char == this._char || this.update(char);
     }
 }

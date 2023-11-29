@@ -37,8 +37,7 @@ const SVG_NORMAL_DEFS =
 `;
 
 const SVG_MODERN_DEFS =
-`<?xml version="1.0" encoding="UTF-8"?>
-<svg version="1.1" viewBox="0 0 108 192" xmlns="http://www.w3.org/2000/svg">
+`<svg version="1.1" viewBox="0 0 108 192" xmlns="http://www.w3.org/2000/svg">
 <defs>
     <path id="segmA" d="m23.5 0h-11.5c-7.9939 0.015236-12 4.0065-12 12v11.5h23.5z" />
     <path id="segmB" d="m24.5 0v24h59v-24z" />
