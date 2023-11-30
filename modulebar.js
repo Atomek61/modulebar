@@ -36,8 +36,8 @@
 //      the modules.
 //
 //      Use other colors:
-//        modbar.color = ["red", "maroon"]; // or ["#f0f", "#202"]
-//        modbar.color = "red"; // colors available: "red", "green", "blue", "yellow"
+//        modbar.colors = ["red", "maroon"]; // or ["#f0f", "#202"]
+//        modbar.colors = "red"; // colors available: "red", "green", "blue", "yellow"
 //
 //((((((((((((((((((((((((((((((((((((((((((((((((((()))))))))))))))))))))))))))))))))))))))))))))))))))
 
@@ -50,7 +50,7 @@ const MOD7_SEGS = {
     "3": "ABCD--G",
     "4": "-BC--FG",
     "5": "A-CD-FG",
-    "6": "A CDEFG",
+    "6": "A-CDEFG",
     "7": "ABC----",
     "8": "ABCDEFG",
     "9": "ABCD-FG",
@@ -121,6 +121,7 @@ class ModuleBar {
         this._brightColor = cols[0];
         this._slant = slant;
         this._spacing = spacing;
+        this._chars = "";
         this.design = DESIGNDEFS[designId];
         this.parser = new DOMParser();
         if (this.design.element == null) {
@@ -177,17 +178,18 @@ class ModuleBar {
         }
     }
 
-    get color() {
+    get colors() {
         return [this._brightColor, this._darkColor];
     }
 
-    set color(value) {
+    set colors(value) {
         if (typeof(value)=="string") {
             let cols = COLOR_SCHEMES[value];
-            this.color = cols;
+            this.colors = cols;
         } else if (value != this.colors) {
-            this.brightColor = value[0];
-            this.darkColor = value[1];
+            this._brightColor = value[0];
+            this._darkColor = value[1];
+            this.update(this._chars);
         }
     }
 
@@ -202,7 +204,7 @@ class ModuleBar {
     update(chars) {
         let c=0, m=0;
         while (c<chars.length && m<this.modules.length) {
-            if (this.modules[m].display(chars[c]))
+            if (this.modules[m].update(chars[c]))
                 c++;
             m++;
         }
