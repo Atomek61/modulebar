@@ -8,13 +8,14 @@
 
     <style title="">
         #modbar {
+            white-space-collapse: collapse;
             width: 400px;
             background-color:black;
         }
     </style>
     <script>
         window.onload = ()=>{
-            bar = new ModuleBar(document.getElementById("modbar"), "88:88", "modern", 0, 2);
+            bar = new ModuleBar(document.getElementById("modbar"), "88:88", "fat", 5, 2);
             bar.color = ["#f0f", "#202"];
             bar.display("12:34:56");
         }

@@ -1,0 +1,16 @@
+<svg version="1.1" viewBox="0 0 108 184" xmlns="http://www.w3.org/2000/svg">
+    <g>
+        <path d="m16 0c-4.1221 0-7.5433 1.7965-10.479 4.5215l27.479 27.479h42l27.479-27.479c-2.9352-2.725-6.4785-4.5215-10.479-4.5215z" style="fill:#ff0000;paint-order:markers fill stroke;stroke-linejoin:round;stroke-width:2"/>
+        <path d="m103.48 5.5215-27.479 27.479v42l16 16 16-16v-59c0-3.8923-1.7965-7.5433-4.5215-10.479z" style="fill:#ff0000;paint-order:markers fill stroke;stroke-linejoin:round;stroke-width:2"/>
+        <path d="m92 93-16 16v42l27.396 27.396c2.7714-2.9944 4.6035-6.3295 4.6035-10.396v-59z" style="fill:#ff0000;paint-order:markers fill stroke;stroke-linejoin:round;stroke-width:2"/>
+        <path d="m33 152-27.479 27.479c2.9352 2.725 5.8967 4.5215 10.479 4.5215h76c4 0 7.4766-1.8589 10.4-4.5996l-27.4-27.4z" style="fill:#ff0000;paint-order:markers fill stroke;stroke-linejoin:round;stroke-width:2"/>
+        <path d="m16 93.003-16 15.997 1.6667e-7 59c1.0671e-8 3.7774 1.7965 7.5433 4.5215 10.479l27.479-27.479v-42z" style="fill:#ff0000;paint-order:markers fill stroke;stroke-linejoin:round;stroke-width:2"/>
+        <path d="m4.5215 5.5215c-2.725 2.9352-4.5215 6.3564-4.5215 10.479v59l16 16 16-16v-42z" style="fill:#ff0000;paint-order:markers fill stroke;stroke-linejoin:round;stroke-width:2"/>
+        <path d="m33 76-16 16 15.431 16 42.569 2e-5 16-16-16-16z" style="fill:#ff0000;paint-order:markers fill stroke;stroke-linejoin:round;stroke-width:2"/>
+        <rect y="152" width="32" height="32" style="fill:#00ff00;paint-order:markers fill stroke;stroke-linejoin:round;stroke-width:2.6667"/>
+        <g transform="translate(32 -7.9847)">
+            <rect x="-32" y="116" width="32" height="32" style="fill:#0000ff;paint-order:markers fill stroke;stroke-linejoin:round;stroke-width:2.6667"/>
+            <rect x="-32" y="52" width="32" height="32" style="fill:#0000ff;paint-order:markers fill stroke;stroke-linejoin:round;stroke-width:2.6656"/>
+        </g>
+    </g>
+</svg>
